@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g -Wall -I/usr/include/irrlicht
+CFLAGS = -g -Wall -I/usr/include/irrlicht -std=c++11
 LDFLAGS = -lIrrlicht -lGL
 
 PROG = hello
