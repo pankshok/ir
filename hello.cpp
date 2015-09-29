@@ -56,10 +56,26 @@ int main(int argc, char **argv) {
                           rect<s32>(10, 10, 260, 30), true);
 
     IMeshSceneNode *wall = smgr->addCubeSceneNode();
-    wall->setMaterialFlag(EMF_LIGHTING, false);
-    wall->setMaterialTexture(0, driver->getTexture("./wall.jpg"));
+    if (wall) {
+        wall->setPosition(core::vector3df(0, 0, 30));
+        wall->setMaterialFlag(EMF_LIGHTING, false);
+        wall->setMaterialTexture(0, driver->getTexture("./wall.jpg"));
+    }
 
-    smgr->addCameraSceneNode(0, vector3df(0, 30, -40), vector3df(0, 5, 0));
+    IMeshSceneNode *actor = smgr->addSphereSceneNode();
+    if (actor) {
+        actor->setMaterialFlag(video::EMF_LIGHTING, false);
+        actor->setMaterialTexture(0, driver->getTexture("./wall.jpg"));
+        ISceneNodeAnimator *anim = smgr->createFlyCircleAnimator(vector3df(0, 0, 30), 20.0f);
+        if (anim) {
+            actor->addAnimator(anim);
+            anim->drop();
+        }
+    }
+
+//    smgr->addCameraSceneNode(0, vector3df(0, 30, -40), vector3df(0, 5, 0));
+    ICameraSceneNode *camera = smgr->addCameraSceneNodeFPS();
+    device->getCursorControl()->setVisible(false);
 
     int i = 0;
     Order mode = Order::ASCENDING;
