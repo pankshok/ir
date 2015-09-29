@@ -9,6 +9,7 @@ using namespace io;
 
 enum class Order {ASCENDING, DESCENDING};
 
+
 class MyEventReceiver : public IEventReceiver
 {
 public:
@@ -36,6 +37,7 @@ public:
 private:
     bool KeyIsDown[KEY_KEY_CODES_COUNT];
 };
+
 
 int main(int argc, char **argv) {
     MyEventReceiver receiver;
