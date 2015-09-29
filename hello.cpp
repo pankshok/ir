@@ -9,14 +9,44 @@ using namespace io;
 
 enum class Order {ASCENDING, DESCENDING};
 
+class MyEventReceiver : public IEventReceiver
+{
+public:
+    virtual bool OnEvent(const SEvent &event)
+    {
+        if (event.EventType == EET_KEY_INPUT_EVENT) {
+            KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
+        }
+
+        return false;
+    }
+
+    virtual bool IsKeyDown(EKEY_CODE keyCode) const
+    {
+        return KeyIsDown[keyCode];
+    }
+
+    MyEventReceiver()
+    {
+        for (u32 i=0; i < KEY_KEY_CODES_COUNT; ++i) {
+            KeyIsDown[i] = false;
+        }
+    }
+
+private:
+    bool KeyIsDown[KEY_KEY_CODES_COUNT];
+};
+
 int main(int argc, char **argv) {
+    MyEventReceiver receiver;
     IrrlichtDevice *device = createDevice(video::EDT_OPENGL,
                                           dimension2d<u32>(640, 480), 16,
-                                          false, false, false, 0);
+                                          false, false, false, &receiver);
     if(!device)
         return 1;
 
     device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
+
 
     IVideoDriver *driver = device->getVideoDriver();
     ISceneManager *smgr = device->getSceneManager();
@@ -33,6 +63,7 @@ int main(int argc, char **argv) {
 
     int i = 0;
     Order mode = Order::ASCENDING;
+    const u32 DWATEVER = 5.f;
     while(device->run()) {
         driver->beginScene(true, true, SColor(0, i, i, i));
         if (mode == Order::ASCENDING)
@@ -52,8 +83,23 @@ int main(int argc, char **argv) {
             }
         }
 
-
         wall->setRotation(wall->getRotation() + vector3df(0, 1, 0));
+
+        vector3df wall_position = wall->getPosition();
+
+        if (receiver.IsKeyDown(KEY_KEY_W))
+            wall_position.Y += DWATEVER;
+        else if (receiver.IsKeyDown(KEY_KEY_S))
+            wall_position.Y -= DWATEVER;
+
+        if (receiver.IsKeyDown(KEY_KEY_A))
+            wall_position.X -= DWATEVER;
+        else if (receiver.IsKeyDown(KEY_KEY_D))
+            wall_position.X += DWATEVER;
+
+
+        wall->setPosition(wall_position);
+
 
         smgr->drawAll();
         guienv->drawAll();
