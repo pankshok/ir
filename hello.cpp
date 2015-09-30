@@ -58,6 +58,14 @@ int main(int argc, char **argv) {
                           rect<s32>(10, 10, 260, 30), true);
 
     IMeshSceneNode *wall = smgr->addCubeSceneNode();
+    IAnimatedMesh *mesh1 = smgr->getMesh("untitled.obj");
+    ISceneNode *node1 = 0;
+
+    if(mesh1) {
+        node1 = smgr->addOctreeSceneNode(mesh1->getMesh(0), 0, -1, 1024);
+        node1->setMaterialFlag(EMF_LIGHTING, false);
+    }
+
     if (wall) {
         wall->setPosition(core::vector3df(0, 0, 30));
         wall->setMaterialFlag(EMF_LIGHTING, false);
@@ -78,6 +86,7 @@ int main(int argc, char **argv) {
 //    smgr->addCameraSceneNode(0, vector3df(0, 30, -40), vector3df(0, 5, 0));
     ICameraSceneNode *camera = smgr->addCameraSceneNodeFPS();
     device->getCursorControl()->setVisible(false);
+    camera->addChild(wall);
 
     int i = 0;
     Order mode = Order::ASCENDING;
