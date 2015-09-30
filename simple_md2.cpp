@@ -49,6 +49,19 @@ public:
         return position;
     }
 
+    vector3df processObjectScaling(ISceneNode *node)
+    {
+        const vector3df scaleFactor = vector3df(1, 1, 1);
+        vector3df scale = node->getScale();
+
+        if (IsKeyDown(KEY_KEY_E))
+            scale += scaleFactor;
+        else if (IsKeyDown(KEY_KEY_Q))
+            scale -= scaleFactor;
+
+        return scale;
+    }
+
 private:
     bool KeyIsDown[KEY_KEY_CODES_COUNT];
 };
@@ -81,6 +94,13 @@ int main(int argc, char **argv) {
         sydney->setMaterialTexture(0, driver->getTexture("./sydney.bmp"));
     }
 
+    IMeshSceneNode *cube = smgr->addMeshSceneNode(smgr->getMesh("./untitled.obj"));
+    if (cube) {
+        cube->setMaterialFlag(EMF_LIGHTING, false);
+        cube->setPosition(vector3df(0, 20, 20));
+        cube->setMaterialTexture(0, driver->getTexture("./wall.jpg"));
+    }
+
     ICameraSceneNode *camera = smgr->addCameraSceneNodeFPS();
     camera->setPosition(vector3df(0, 0, -50));
     device->getCursorControl()->setVisible(false);
@@ -89,9 +109,11 @@ int main(int argc, char **argv) {
     while(device->run()) {
         driver->beginScene(true, true, SColor(0, 0, 0, 0));
 
-        vector3df camera_position = receiver.processObjectMovement(camera);
-        camera->setPosition(camera_position);
+        vector3df wall_position = receiver.processObjectMovement(wall);
+        wall->setPosition(wall_position);
 
+        vector3df cube_scale = receiver.processObjectScaling(cube);
+        cube->setScale(cube_scale);
 
         smgr->drawAll();
 
